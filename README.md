@@ -3,7 +3,7 @@ Network Mesh Project
 
 - Henne Cuppens
 - Nils Jaspers
-- Arno Lindeboom
+- Arno Lindeboom (Scrum Master)
 - Martijn van Olst
-- Koen Sleurink
+- Koen Sleurink (Project Leider, Contactpersoon)
 - Gerard Zeeman
