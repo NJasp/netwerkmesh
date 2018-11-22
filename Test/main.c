@@ -28,10 +28,13 @@ spi_t sender_spi_struct;
 
 int main(void)
 {
-    puts("Hello World! Test test");
+    while(1)
+    {
+        puts("Hallo Welt!\n");
 
-    printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
-    printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+        printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
+        printf("This board features a(n) %s MCU.\n", RIOT_MCU);
+    }
 
     mrf24j40_setup(&sender, &senderparams);
     //mrf24j40_init(&sender);
