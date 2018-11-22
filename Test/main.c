@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <mrf24j40.h>
 
 int main(void)
 {

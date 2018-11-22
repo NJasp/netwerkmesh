@@ -4,6 +4,8 @@ APPLICATION = Test
 # If no BOARD is found in the environment, use this default:
 BOARD ?= stm32f0discovery
 
+USEMODULE += mrf24j40
+
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
 
