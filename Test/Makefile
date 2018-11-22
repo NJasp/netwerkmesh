@@ -2,7 +2,7 @@
 APPLICATION = Test
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= native
+BOARD ?= stm32f0discovery
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
