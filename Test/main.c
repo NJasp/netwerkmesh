@@ -21,26 +21,23 @@
 
 #include <stdio.h>
 #include <mrf24j40.h>
-
-mrf24j40_t sender;
-const mrf24j40_params_t senderparams;
-spi_t sender_spi_struct;
+#include <mrf24j40_params.h>
 
 int main(void)
 {
-    // senderparams vullen
-    
+	puts("Hallo Welt!\n");
 
-    mrf24j40_setup(&sender, &senderparams);
-    //mrf24j40_init(&sender);
+	printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
+	printf("This board features a(n) %s MCU.\n", RIOT_MCU);
 
-    while(1)
-    {
-        puts("Hallo Welt!\n");
+	mrf24j40_t *dev = malloc(sizeof(mrf24j40_t));
+	mrf24j40_params_t params = MRF24J40_PARAMS;
+	mrf24j40_setup(dev, &params);
 
-        printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
-        printf("This board features a(n) %s MCU.\n", RIOT_MCU);
-    }
-
+	// test board by setting random shit
+	printf("mrf addr: %d\nmrf txpower: %d\n", mrf24j40_get_addr_short(dev), mrf24j40_get_txpower(dev));
+	mrf24j40_set_addr_short(dev, 0x3);
+	mrf24j40_set_txpower(dev, 100);
+	printf("mrf addr: %d\nmrf txpower: %d\n", mrf24j40_get_addr_short(dev), mrf24j40_get_txpower(dev));
     return 0;
 }
