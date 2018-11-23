@@ -28,6 +28,12 @@ spi_t sender_spi_struct;
 
 int main(void)
 {
+    // senderparams vullen
+    
+
+    mrf24j40_setup(&sender, &senderparams);
+    //mrf24j40_init(&sender);
+
     while(1)
     {
         puts("Hallo Welt!\n");
@@ -35,9 +41,6 @@ int main(void)
         printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
         printf("This board features a(n) %s MCU.\n", RIOT_MCU);
     }
-
-    mrf24j40_setup(&sender, &senderparams);
-    //mrf24j40_init(&sender);
 
     return 0;
 }
