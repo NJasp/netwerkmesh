@@ -1,24 +1,3 @@
-/*
- * Copyright (C) 2014 Freie Universität Berlin
- *
- * This file is subject to the terms and conditions of the GNU Lesser
- * General Public License v2.1. See the file LICENSE in the top level
- * directory for more details.
- */
-
-/**
- * @ingroup     examples
- * @{
- *
- * @file
- * @brief       Hello World application
- *
- * @author      Kaspar Schleiser <kaspar@schleiser.de>
- * @author      Ludwig Knüpfer <ludwig.knuepfer@fu-berlin.de>
- *
- * @}
- */
-
 #include <stdio.h>
 #include <mrf24j40.h>
 #include <mrf24j40_params.h>
@@ -28,9 +7,6 @@ char *data = "xy";
 
 int main(void)
 {
-    // senderparams vullen
-    
-
     mrf24j40_setup(&sender, mrf24j40_params);  
     mrf24j40_reset(&sender);
 
@@ -49,5 +25,10 @@ int main(void)
         //mrf24j40_reg_write_short(&sender, 0xf8f8, )
     }
 
+	// test board by setting random shit
+	//printf("mrf addr: %d\nmrf txpower: %d\n", mrf24j40_get_addr_short(dev), mrf24j40_get_txpower(dev));
+	//mrf24j40_set_addr_short(dev, 0x3);
+	//mrf24j40_set_txpower(dev, 100);
+	//printf("mrf addr: %d\nmrf txpower: %d\n", mrf24j40_get_addr_short(dev), mrf24j40_get_txpower(dev));
     return 0;
 }
