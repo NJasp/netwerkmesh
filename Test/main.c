@@ -1,28 +1,28 @@
 #include <stdio.h>
 #include <mrf24j40.h>
 #include <mrf24j40_params.h>
+#include <mrf24j40_internal.h>
+//include <xtimer.h>
 
 mrf24j40_t sender;
-char *data = "xy";
+uint8_t data = 8;
 
 int main(void)
 {
     mrf24j40_setup(&sender, mrf24j40_params);  
     mrf24j40_reset(&sender);
-
+    //gpio_clear(sender.params.reset_pin);
     //puts("Hallo Welt!\n");
 
     //printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
     //printf("This board features a(n) %s MCU.\n", RIOT_MCU);
-
+    mrf24j40_tx_prepare(&sender);
+    printf("\n\r%d", mrf24j40_tx_load(&sender, &data, 1, 0));
+    
     while(1)
     {
-
-    //mrf24j40_tx_prepare(&sender);
-    //mrf24j40_tx_load(&sender, (uint8_t*)data, 2, 0);
-
-    //mrf24j40_tx_exec(&sender);
-        //mrf24j40_reg_write_short(&sender, 0xf8f8, )
+    mrf24j40_tx_exec(&sender);
+    //mrf24j40_tx_normal_fifo_write(&sender,0,&data, 1);
     }
 
 	// test board by setting random shit

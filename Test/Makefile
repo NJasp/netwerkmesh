@@ -4,7 +4,13 @@ APPLICATION = Test
 # If no BOARD is found in the environment, use this default:
 BOARD ?= stm32f0discovery
 
+DEVELHELP ?= 1
+
+# USEMODULE += gnrc_netdev_default
+# USEMODULE += auto_init_gnrc_netif
+# USEMODULE += auto_init
 USEMODULE += mrf24j40
+
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
