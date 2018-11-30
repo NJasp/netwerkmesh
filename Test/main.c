@@ -3,7 +3,7 @@
 #include <mrf24j40_params.h>
 
 mrf24j40_t sender;
-char *data = "xy";
+uint8_t data = 8;
 
 int main(void)
 {
@@ -11,10 +11,10 @@ int main(void)
     mrf24j40_reset(&sender);
     
     mrf24j40_tx_prepare(&sender);
+    mrf24j40_tx_load(&sender, &data, 1, 0);
 
     while (1)
     {
-        mrf24j40_tx_load(&sender, (uint8_t *)data, 2, 0);
         mrf24j40_tx_exec(&sender);
     }
 
