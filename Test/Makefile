@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = Test
+APPLICATION = sixlowpan
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= stm32f0discovery
@@ -23,7 +23,7 @@ USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6
 #USEMODULE += gnrc_udp
 # Additional networking modules that can be dropped if not needed
-USEMODULE += gnrc_icmpv6_echo
+#USEMODULE += gnrc_icmpv6_echo
 # Use minimal standard PRNG
 USEMODULE += prng_minstd
 
