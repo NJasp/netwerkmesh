@@ -3,7 +3,7 @@
 #include <mrf24j40_params.h>
 
 mrf24j40_t sender;
-uint8_t data = 8;
+uint8_t data = 2;
 
 int main(void)
 {
