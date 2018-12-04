@@ -3,8 +3,6 @@
 #include <mrf24j40_internal.h>
 #include <mrf24j40_params.h>
 
-char *data = "xy";
-
 int main(void)
 {
 	mrf24j40_t dev;
