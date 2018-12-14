@@ -41,6 +41,22 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
+static kernel_pid_t led_pid;
+static char _ledstack[THREAD_STACKSIZE_SMALL];
+static void *_led_fwd_eventloop(void *arg)
+{
+    (void)arg;
+    while(1)
+    {
+        gpio_write(GPIO4, 1);
+        xtimer_sleep(1);
+        gpio_write(GPIO4, 0);
+        thread_sleep();
+    }
+    /* never reached */
+    return NULL;
+}
+
 #ifdef MODULE_GNRC_SIXLOWPAN
 static char _stack[THREAD_STACKSIZE_MAIN];
 
@@ -58,6 +74,7 @@ static void *_ipv6_fwd_eventloop(void *arg)
 
     while(1) {
         msg_receive(&msg);
+        thread_wakeup(led_pid);
         gnrc_pktsnip_t *pkt = msg.content.ptr;
         if(msg.type == GNRC_NETAPI_MSG_TYPE_SND) {
             gnrc_pktsnip_t *ipv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_IPV6);
@@ -99,11 +116,14 @@ static void *_ipv6_fwd_eventloop(void *arg)
 int main(void)
 {
     gpio_init(GPIO4, GPIO_OUT);
-    gpio_write(GPIO4, 1);
+    
     /* we need a message queue for the thread running the shell in order to
      * receive potentially fast incoming networking packets */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
+
+    led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5),
+                         THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
 
 
 
