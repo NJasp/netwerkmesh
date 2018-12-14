@@ -98,10 +98,14 @@ static void *_ipv6_fwd_eventloop(void *arg)
 
 int main(void)
 {
+    gpio_init(GPIO4, GPIO_OUT);
+    gpio_write(GPIO4, 1);
     /* we need a message queue for the thread running the shell in order to
      * receive potentially fast incoming networking packets */
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
+
+
 
 #ifdef MODULE_GNRC_SIXLOWPAN
     thread_create(_stack, sizeof(_stack), (THREAD_PRIORITY_MAIN - 4),
