@@ -45,9 +45,7 @@ static kernel_pid_t led_pid;
 static char _ledstack[THREAD_STACKSIZE_SMALL];
 static void *_led_fwd_eventloop(void *arg)
 {
-    (void)arg;
-    while(1)
-    {
+    while(1) {
         gpio_write(GPIO4, 1);
         xtimer_sleep(1);
         gpio_write(GPIO4, 0);
@@ -74,7 +72,6 @@ static void *_ipv6_fwd_eventloop(void *arg)
 
     while(1) {
         msg_receive(&msg);
-        thread_wakeup(led_pid);
         gnrc_pktsnip_t *pkt = msg.content.ptr;
         if(msg.type == GNRC_NETAPI_MSG_TYPE_SND) {
             gnrc_pktsnip_t *ipv6 = gnrc_pktsnip_search_type(pkt, GNRC_NETTYPE_IPV6);
@@ -96,6 +93,7 @@ static void *_ipv6_fwd_eventloop(void *arg)
                     (!ipv6_addr_is_link_local(&ipv6_hdr->src)) &&
                     (!ipv6_addr_is_link_local(&ipv6_hdr->dst)) &&
                     (!ipv6_addr_equal(&addrs[i], &(ipv6_hdr->src)))) {
+					thread_wakeup(led_pid);
                     char addr_str[IPV6_ADDR_MAX_STR_LEN];
                     printf("IPv6 ROUTER: forward from src = %s ",
                            ipv6_addr_to_str(addr_str, &(ipv6_hdr->src),
