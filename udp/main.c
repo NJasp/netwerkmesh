@@ -12,18 +12,21 @@
 #include "net/gnrc/ipv6.h"
 
 #define MAIN_QUEUE_SIZE     (8)
-static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
 extern int udp_cmd(int argc, char **argv);
+extern void start_server(char *port_str);
 
+static kernel_pid_t led_pid;
+static char _ledstack[THREAD_STACKSIZE_SMALL]; // No large stack size neccesary, so using small stack
+static kernel_pid_t udp_pid;
+static char _udp_receive_stack[THREAD_STACKSIZE_MAIN];
+static char _stack[THREAD_STACKSIZE_MAIN];
 static const shell_command_t shell_commands[] = {
     { "udp", "send data over UDP and listen on UDP ports", udp_cmd },
     { NULL, NULL, NULL }
 };
 
 // Give LED thread a kernel pid and a stack
-static kernel_pid_t led_pid;
-static char _ledstack[THREAD_STACKSIZE_SMALL]; // No large stack size neccesary, so using small stack
 // Function containing the code to be exectued in the LED thread
 static void *_led_fwd_eventloop(void *arg)
 {
@@ -38,9 +41,6 @@ static void *_led_fwd_eventloop(void *arg)
     /* never reached */
     return NULL;
 }
-
-static kernel_pid_t udp_pid;
-static char _udp_receive_stack[THREAD_STACKSIZE_MAIN];
 void *_udp_receive_loop(void *arg)
 {
     static msg_t _msg_q[Q_SZ];
@@ -76,10 +76,7 @@ void *_udp_receive_loop(void *arg)
     }
     return NULL;
 }
-
 #ifdef MODULE_GNRC_SIXLOWPAN
-static char _stack[THREAD_STACKSIZE_MAIN];
-
 static void *_ipv6_fwd_eventloop(void *arg)
 {
     (void)arg;
@@ -139,12 +136,13 @@ int main(void)
     
     /* we need a message queue for the thread running the shell in order to
      * receive potentially fast incoming networking packets */
-    msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
 
     led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5), THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
 
     udp_pid = thread_create(_udp_receive_stack, sizeof(_udp_receive_stack), (THREAD_PRIORITY_MAIN - 6), THREAD_CREATE_STACKTEST, _udp_receive_loop, NULL, "udp_receive");
+
+    start_server("80");
 
 #ifdef MODULE_GNRC_SIXLOWPAN
     thread_create(_stack, sizeof(_stack), (THREAD_PRIORITY_MAIN - 4), THREAD_CREATE_STACKTEST, _ipv6_fwd_eventloop, NULL, "ipv6_fwd");

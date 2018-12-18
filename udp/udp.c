@@ -1,24 +1,3 @@
-/*
- * Copyright (C) 2015-17 Freie Universität Berlin
- *
- * This file is subject to the terms and conditions of the GNU Lesser
- * General Public License v2.1. See the file LICENSE in the top level
- * directory for more details.
- */
-
-/**
- * @ingroup     examples
- * @{
- *
- * @file
- * @brief       Demonstrating the sending and receiving of UDP data
- *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
- * @author      Martine Lenders <m.lenders@fu-berlin.de>
- *
- * @}
- */
-
 #include <stdio.h>
 #include <inttypes.h>
 
@@ -32,12 +11,10 @@
 #include "utlist.h"
 #include "xtimer.h"
 
-static gnrc_netreg_entry_t server = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL,
-                                                               KERNEL_PID_UNDEF);
+static gnrc_netreg_entry_t server = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL, KERNEL_PID_UNDEF);
 
 
-static void send(char *addr_str, char *port_str, char *data, unsigned int num,
-                 unsigned int delay)
+static void send(char *addr_str, char *port_str, char *data, unsigned int num, unsigned int delay)
 {
     int iface;
     uint16_t port;
@@ -106,7 +83,7 @@ static void send(char *addr_str, char *port_str, char *data, unsigned int num,
     }
 }
 
-static void start_server(char *port_str)
+void start_server(char *port_str)
 {
     uint16_t port;
 
@@ -170,13 +147,13 @@ int udp_cmd(int argc, char **argv)
             printf("usage: %s server [start|stop]\n", argv[0]);
             return 1;
         }
-        if (strcmp(argv[2], "start") == 0) {
+        /*if (strcmp(argv[2], "start") == 0) {
             if (argc < 4) {
                 printf("usage %s server start <port>\n", argv[0]);
                 return 1;
             }
             start_server(argv[3]);
-        }
+        }*/
         else if (strcmp(argv[2], "stop") == 0) {
             stop_server();
         }
