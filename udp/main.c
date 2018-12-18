@@ -142,7 +142,7 @@ int main(void)
 
     udp_pid = thread_create(_udp_receive_stack, sizeof(_udp_receive_stack), (THREAD_PRIORITY_MAIN - 6), THREAD_CREATE_STACKTEST, _udp_receive_loop, NULL, "udp_receive");
 
-    start_server("80");
+    start_server("88");
 
 #ifdef MODULE_GNRC_SIXLOWPAN
     thread_create(_stack, sizeof(_stack), (THREAD_PRIORITY_MAIN - 4), THREAD_CREATE_STACKTEST, _ipv6_fwd_eventloop, NULL, "ipv6_fwd");
