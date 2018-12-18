@@ -1,25 +1,4 @@
-/*
- * Copyright (C) 2015-18 Freie Universität Berlin
- * Copyright (C) 2016 Hochschule für Angewandte Wissenschaften Hamburg
- *
- * This file is subject to the terms and conditions of the GNU Lesser
- * General Public License v2.1. See the file LICENSE in the top level
- * directory for more details.
- */
-
-/**
- * @ingroup     examples
- * @{
- *
- * @file
- * @brief       Example application for demonstrating the RIOT network stack
- *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
- * @author      Martine Lenders <m.lenders@fu-berlin.de>
- * @author      Peter Kietzmann <peter.kietzmann@haw-hamburg.de>
- *
- * @}
- */
+#define Q_SZ 64
 
 #include <stdio.h>
 
@@ -29,6 +8,7 @@
 
 #include "net/gnrc.h"
 #include "net/gnrc/netif.h"
+#include "net/gnrc/netreg.h"
 #include "net/gnrc/ipv6.h"
 
 #define MAIN_QUEUE_SIZE     (8)
@@ -52,6 +32,44 @@ static void *_led_fwd_eventloop(void *arg)
         thread_sleep();
     }
     /* never reached */
+    return NULL;
+}
+
+static kernel_pid_t udp_pid;
+static char _udp_receive_stack[THREAD_STACKSIZE_MAIN];
+void *_udp_receive_loop(void *arg)
+{
+    static msg_t _msg_q[Q_SZ];
+    msg_t msg, reply;
+    reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
+    reply.content.value = -ENOTSUP;
+    msg_init_queue(_msg_q, Q_SZ);
+    gnrc_pktsnip_t *pkt = NULL;
+    gnrc_netreg_entry_t me_reg;
+    me_reg.demux_ctx = 80;
+    me_reg.target.pid = thread_getpid();
+    gnrc_netreg_register(GNRC_NETTYPE_UDP, &me_reg);
+    while (1) {
+        msg_receive(&msg);
+        switch (msg.type) {
+            case GNRC_NETAPI_MSG_TYPE_RCV:
+                pkt = msg.content.ptr;
+                printf("UDP message received: %s\n", (char*)pkt->data);
+                //_handle_incoming_pkt(pkt);
+                break;
+            case GNRC_NETAPI_MSG_TYPE_SND:
+                //pkt = msg.content.ptr;
+                printf("UDP message send: %s\n", (char*)pkt->data);
+                //_handle_outgoing_pkt(pkt);
+                break;
+             case GNRC_NETAPI_MSG_TYPE_SET:
+             case GNRC_NETAPI_MSG_TYPE_GET:
+                msg_reply(&msg, &reply);
+                break;
+            default:
+                break;
+        }
+    }
     return NULL;
 }
 
@@ -120,14 +138,12 @@ int main(void)
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     puts("RIOT network stack example application");
 
-    led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5),
-                         THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
+    led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5), THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
 
-
+    udp_pid = thread_create(_udp_receive_stack, sizeof(_udp_receive_stack), (THREAD_PRIORITY_MAIN - 6), THREAD_CREATE_STACKTEST, _udp_receive_loop, NULL, "udp_receive");
 
 #ifdef MODULE_GNRC_SIXLOWPAN
-    thread_create(_stack, sizeof(_stack), (THREAD_PRIORITY_MAIN - 4),
-                         THREAD_CREATE_STACKTEST, _ipv6_fwd_eventloop, NULL, "ipv6_fwd");
+    thread_create(_stack, sizeof(_stack), (THREAD_PRIORITY_MAIN - 4), THREAD_CREATE_STACKTEST, _ipv6_fwd_eventloop, NULL, "ipv6_fwd");
 #endif
     /* start shell */
     puts("All up, running the shell now");
