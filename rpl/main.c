@@ -41,14 +41,18 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
+// Give LED thread a kernel pid and a stack
 static kernel_pid_t led_pid;
-static char _ledstack[THREAD_STACKSIZE_SMALL];
+static char _ledstack[THREAD_STACKSIZE_SMALL]; // No large stack size neccesary, so using small stack
+// Function containing the code to be exectued in the LED thread
 static void *_led_fwd_eventloop(void *arg)
 {
     while(1) {
+	// Write LED high, wait 1 second and write LED low
         gpio_write(GPIO4, 1);
         xtimer_sleep(1);
         gpio_write(GPIO4, 0);
+	// Set thread to sleeping, when new message arrives the thread will be waken up
         thread_sleep();
     }
     /* never reached */
@@ -93,7 +97,7 @@ static void *_ipv6_fwd_eventloop(void *arg)
                     (!ipv6_addr_is_link_local(&ipv6_hdr->src)) &&
                     (!ipv6_addr_is_link_local(&ipv6_hdr->dst)) &&
                     (!ipv6_addr_equal(&addrs[i], &(ipv6_hdr->src)))) {
-					thread_wakeup(led_pid);
+					thread_wakeup(led_pid); // Wake up the LED thread, indicating a routing message has been received
                     char addr_str[IPV6_ADDR_MAX_STR_LEN];
                     printf("IPv6 ROUTER: forward from src = %s ",
                            ipv6_addr_to_str(addr_str, &(ipv6_hdr->src),
