@@ -50,7 +50,7 @@ void *_udp_receive_loop(void *arg)
     msg_init_queue(_msg_q, Q_SZ);
     gnrc_pktsnip_t *pkt = NULL;
     gnrc_netreg_entry_t me_reg;
-    me_reg.demux_ctx = 80;
+    me_reg.demux_ctx = 88;
     me_reg.target.pid = thread_getpid();
     gnrc_netreg_register(GNRC_NETTYPE_UDP, &me_reg);
     while (1) {
