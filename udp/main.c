@@ -17,6 +17,7 @@ extern int udp_cmd(int argc, char **argv);
 extern void start_server(char *port_str);
 
 static kernel_pid_t led_pid;
+static msg_t main_msg_q[Q_SZ];
 static char _ledstack[THREAD_STACKSIZE_SMALL]; // No large stack size neccesary, so using small stack
 static kernel_pid_t udp_pid;
 static char _udp_receive_stack[THREAD_STACKSIZE_MAIN];
@@ -132,10 +133,10 @@ static void *_ipv6_fwd_eventloop(void *arg)
 
 int main(void)
 {
+    msg_init_queue(main_msg_q, Q_SZ);
+
     gpio_init(GPIO4, GPIO_OUT);
     
-    /* we need a message queue for the thread running the shell in order to
-     * receive potentially fast incoming networking packets */
     puts("RIOT network stack example application");
 
     led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5), THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
