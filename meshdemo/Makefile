@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = task-09
+APPLICATION = meshdemo
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= esp8266-esp-12x

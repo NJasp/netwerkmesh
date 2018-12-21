@@ -136,8 +136,6 @@ int main(void)
     msg_init_queue(main_msg_q, Q_SZ);
 
     gpio_init(GPIO4, GPIO_OUT);
-    
-    puts("RIOT network stack example application");
 
     led_pid = thread_create(_ledstack, sizeof(_ledstack), (THREAD_PRIORITY_MAIN - 5), THREAD_CREATE_STACKTEST, _led_fwd_eventloop, NULL, "led_fwd");
 
