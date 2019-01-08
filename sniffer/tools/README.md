@@ -55,9 +55,8 @@ For detailed information on the parameters use the scripts on-line help:
 ### Examples
 
 The following examples are made when using the sniffer application together with
-an `iotlab-m3` node that is connected to `/dev/ttyUSB1`(or COM1) (`serial` connection type)
-and runs per default with a baudrate of 500000. For the `socket` connection type port 20000
-is used.
+an `esp8266` node that is connected to `/dev/ttyUSB0`(or COM0) (`serial` connection type)
+and runs per default with a baudrate of 115200.
 
 #### Linux (serial)
 
