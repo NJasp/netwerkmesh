@@ -42,30 +42,44 @@ static void *_led_fwd_eventloop(void *arg)
     /* never reached */
     return NULL;
 }
+
+//Scheduled task to receive udp packets
 void *_udp_receive_loop(void *arg)
 {
+	//Variable for message queue used by application layer
     static msg_t _msg_q[Q_SZ];
+	//Create a message to reply with
     msg_t msg, reply;
     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
     reply.content.value = -ENOTSUP;
+	//Initialize the message queue with the static queue size
     msg_init_queue(_msg_q, Q_SZ);
+	//Create a empty UDP packet pointer that will be used to point to the data of the udp packet 
     gnrc_pktsnip_t *pkt = NULL;
     gnrc_netreg_entry_t me_reg;
+	//Setup the thread and port number that is used
     me_reg.demux_ctx = 88;
     me_reg.target.pid = thread_getpid();
+	//Register this thread to be used as udp receive thread
     gnrc_netreg_register(GNRC_NETTYPE_UDP, &me_reg);
     while (1) {
+		//Listen on incoming messages
         msg_receive(&msg);
+		//If a message is received, lookup the type of message
         switch (msg.type) {
+			//Message is a incoming message
             case GNRC_NETAPI_MSG_TYPE_RCV:
+				//Set the packet pointer to the data of the message
                 pkt = msg.content.ptr;
+				//Print the data of the packet
                 printf("UDP message received: %s\n", (char*)pkt->data);
-                //_handle_incoming_pkt(pkt);
                 break;
+			//Message is a outgoing message
             case GNRC_NETAPI_MSG_TYPE_SND:
-                //pkt = msg.content.ptr;
+			    //Set the packet pointer to the data of the message
+				pkt = msg.content.ptr;
+				//Print the data of the packet
                 printf("UDP message send: %s\n", (char*)pkt->data);
-                //_handle_outgoing_pkt(pkt);
                 break;
              case GNRC_NETAPI_MSG_TYPE_SET:
              case GNRC_NETAPI_MSG_TYPE_GET:
